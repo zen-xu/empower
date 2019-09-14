@@ -1,2 +1,3 @@
 # empower
-Good Bye Inheritance
+
+Goodbye Inheritance!!!
