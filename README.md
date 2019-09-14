@@ -1,0 +1,2 @@
+# empower
+Good Bye Inheritance
