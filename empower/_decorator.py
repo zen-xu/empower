@@ -1,17 +1,14 @@
-from .utils import assert_root_subclass
-
-
 def impl(target_cls):
     """
     with `impl` decorator you can empower your class without create
     a subclass
     """
 
-    assert_root_subclass(target_cls)
-
     def wrapped(impl_cls):
-        assert_root_subclass(target_cls)
-        target_cls.__bases__ = (impl_cls, *target_cls.__bases__)
+        for name, method in impl_cls.__dict__.items():
+            if name.startswith("_"):
+                continue
+            setattr(target_cls, name, method)
 
         if target_cls.__doc__ is None:
             target_cls.__doc__ = ""
