@@ -1,45 +1,31 @@
 import pytest  # noqa F401
-from empower import __version__
-from empower import impl
-from dataclasses import dataclass
+from empower import __version__, clean, use
+from tests.fixture.dog import Dog
 
 
 def test_version():
     assert __version__ == "0.1.0"
 
 
-def test_impl():
-    class Dog:
-        name = "bos"
+def test_dog():
+    dog = Dog()
 
-    bos = Dog()
     with pytest.raises(AttributeError):
-        bos.fly()
+        dog.run()
+        dog.bark()
 
-    @impl(Dog)
-    class Fly:
-        def fly(self):
-            return "I can fly"
+    use("tests.fixture.traits.run")
+    assert dog.run() == "run"
 
-    bos.name == "bos"
-    bos.fly() == "I can fly"
+    clean("tests.fixture.traits.run")
+    with pytest.raises(AttributeError):
+        dog.run()
 
+    use("tests.fixture.traits.bark")
+    assert dog.bark() == "bark"
 
-def test_impl_dataclasses():
-    @dataclass
-    class Paper:
-        width: int
-        height: int
+    use("tests.fixture.traits.run")
+    assert dog.run() == "run"
 
-    paper = Paper(2, 4)
-
-    @impl(Paper)
-    class Arithmetic:
-        def square(self):
-            return self.width * self.height
-
-        def perimeter(self):
-            return (self.width + self.height) * 2
-
-    assert paper.square() == 8
-    assert paper.perimeter() == 12
+    clean("tests.fixture.traits.run")
+    clean("tests.fixture.traits.bark")
